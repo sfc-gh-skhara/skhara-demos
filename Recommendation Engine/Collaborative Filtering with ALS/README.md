@@ -4,7 +4,7 @@ Article for Inspiration: https://towardsdatascience.com/alternating-least-square
 
 Library Used: https://benfred.github.io/implicit/
 
-![Alt text](image.png)
+![Collab Filtering](image.png)
 
 ## Steps:
 - Import libraries
