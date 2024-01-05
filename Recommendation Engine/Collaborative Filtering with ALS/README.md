@@ -15,7 +15,7 @@ Library Used: https://benfred.github.io/implicit/
 - Create a Task and schedule it
 
 ## Alternating Least Square for Implicit Dataset
-In the era of big data and analytics, the power which a data driven business has been exponentially increasing. Greater integration of AI and Machine learning has played a vital role in development of systems which can benefit both the Business and Business user as well. Moreover, Recommendation systems add an edge to digital businesses. Below chart shows the importance of recommendation systems.
+Integration of AI and Machine learning has played a vital role in development of systems which can benefit both the Business and Business user as well. Moreover, Recommendation systems add an edge to digital businesses. 
 
 A dataset containing explicit rank, count or category of particular item or event is considered an explicit data item. 4 out of 5 rating of a movie is an explicit data point. Whereas, in implicit dataset we need to understand the interaction of users and/or events to find out its rank/category. For example, a person watching a single genres of the movies. This kind of datasets are considered implicit. We had miss a whole lot of hidden insights if we don’t consider implicit datasets.
 
