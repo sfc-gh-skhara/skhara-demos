@@ -1,31 +1,44 @@
 # Recommend Items using Collaborative Filtering
 
-Article for Inspiration: https://towardsdatascience.com/alternating-least-square-for-implicit-dataset-with-code-8e7999277f4b
+## Objective
+Collaborative filtering is a technique that can filter out items that a user might like on the basis of reactions by similar users. Most websites like Amazon, YouTube, and Netflix use collaborative filtering as a part of their sophisticated recommendation systems. You can use this technique to build recommenders that give suggestions to a user on the basis of the likes and dislikes of similar users.
 
-Library Used: https://benfred.github.io/implicit/
+The objective of this document is to compare Collaborative Filtering model pipeline performance between Snowflake and Databricks.
 
-![Collab Filtering](image.png)
+## Summary
+Traditionally, Spark has been heralded as a fast parallel processing engine for Python applications. However, the advent of Snowflake in the Python ecosystem has introduced a significant competitor. In our comparison, we focused on the Alternating Least Squares (ALS) method for Collaborative Filtering, contrasting MLlib in the PySpark framework against the pure Python package 'Implicit' in Snowflake. Our performance evaluation was conducted using a dataset that captures the shopping behaviors of 1.4 million users.
 
-## Steps:
-- Import libraries
-- Setup Snowflake objects
-- Load data to Snowflake (you may skip this step if you already have data in Snowflake)
-- Write code to run Implicit library locally on your machine
-- Package code to and make it clean
-- Create a Task and schedule it
+![Results](images/results.png)
 
-## Alternating Least Square for Implicit Dataset
-Integration of AI and Machine learning has played a vital role in development of systems which can benefit both the Business and Business user as well. Moreover, Recommendation systems add an edge to digital businesses. 
+The comparison spanned various Warehouse (cluster) sizes in Snowflake to gauge each step of the recommendation engine pipeline. Surprisingly, the Snowflake implementation outperformed the Spark-based approach in Databricks, particularly in model inference. This stage was efficiently managed in Snowflake using User Defined Functions, enabling the generation of top-5 item recommendations for each of the 1.4 million customers through parallel computation. Overall, a SMALL Warehouse configuration in Snowflake achieved processing speeds 3x faster than its Databricks Spark counterpart, and a MEDIUM Snowpark Warehouse configuration was 7x faster. These findings underscore Snowflake's prowess in facilitating rapid parallel computation, even with straightforward Python-based processes without much code refactoring to suit distributed computation frameworks.
 
-A dataset containing explicit rank, count or category of particular item or event is considered an explicit data item. 4 out of 5 rating of a movie is an explicit data point. Whereas, in implicit dataset we need to understand the interaction of users and/or events to find out its rank/category. For example, a person watching a single genres of the movies. This kind of datasets are considered implicit. We had miss a whole lot of hidden insights if we don’t consider implicit datasets.
+## Collaborative Filtering Explained
+User reactions on a website can be explicit (rating on a scale of 1 to 5, likes or dislikes) or implicit (viewing an item, adding it to a wish list, the time spent on an article).
+
+Explicit data is data where we have some sort of rating. Like the 1 to 5 ratings from the MovieLens or Netflix dataset. Here we know how much a user likes or dislikes an item which is great, but this data is hard to come by. Your users might not spend the time to rate items or your app might not work well with a rating approach in the first place.
+
+In real-world scenarios most feedback is not explicit but implicit. Implicit feedback is tracked automatically, like monitoring clicks, view times, purchases, etc. Thus it is much easier to collect. Think of yourself, how often you give a rating after purchasing a product vs. how often you click or purchase a product. In this document, we will focus on item recommendation.
 
 ***Implicit dataset contains user and item interactions only.***
 
-Data - RetailRocket dataset https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset is one very good implicit data to understand Alternating least square method.
+## Dataset
 
-## Learn more About ALS for Recommendation Engine
+For this exercise we’ll be using the “Retailrocket recommender system dataset” containing the shopping behavior of 1.4 Million users. In total there are 2,756,101 events including 2,664,312 views, 69,332 add to carts and 22,457 transactions produced by 1,407,580 unique visitors.
+
+Retail Rocket dataset- https://www.kaggle.com/datasets/retailrocket/ecommerce-dataset
+
+## Library Used
+Given user-item interaction datasets are usually big, we require parallel/distributed computing capabilities to build models and derive recommendations. In our comparative analysis project, we are examining the performance and capabilities of ALS (Alternating Least Squares) implementations between two major data processing platforms: Databricks and Snowflake. These platforms employ different libraries and computing paradigms for distributed and parallel processing.
+
+#### Databricks + PySpark MLlib Library:
+Databricks leverages the power of Apache Spark, a unified analytics engine for large-scale data processing. Within this ecosystem, we use PySpark, the Python API for Spark, which allows for seamless integration of Python's extensive libraries with Spark's distributed computing capabilities. For our ALS implementation on Databricks, we utilize the PySpark MLlib library. MLlib is Spark's scalable machine learning library which includes an efficient implementation of the ALS algorithm, optimized for parallel processing and handling big data.
+
+#### Snowflake Snowpark + Python Implicit Library:
+Snowflake utilizes Snowpark, a robust developer framework that integrates DataFrame-style programming with the power of distributed and parallel computing in Python. Snowpark operates in a pure Python runtime environment, thereby harnessing the rich ecosystem of Python libraries while simultaneously enabling high-performance data processing. With Snowflake, we employ the Implicit library - a preferred Python library for collaborative filtering with implicit datasets. Typically recognized for its user-friendly interface and effectiveness with small datasets, the Implicit library, when combined with Snowpark's capabilities, transforms into a formidable solution for big data challenges.
+
+
+## References
 1. A gentle introduction to Alternating Least Squares: https://sophwats.github.io/2018-04-05-gentle-als.html
 2. ALS Implicit Collaborative Filtering: https://medium.com/radon-dev/als-implicit-collaborative-filtering-5ed653ba39fe
 3. Alternating Least Square for Implicit Dataset with code: https://towardsdatascience.com/alternating-least-square-for-implicit-dataset-with-code-8e7999277f4b
 4. Various Implementations of Collaborative Filtering: https://towardsdatascience.com/various-implementations-of-collaborative-filtering-100385c6dfe0
-
