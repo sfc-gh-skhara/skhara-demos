@@ -1,23 +1,23 @@
 # Recommend Items using Collaborative Filtering
 
 ## Objective
-Collaborative filtering is a technique that can filter out items that a user might like on the basis of reactions by similar users. Most websites like Amazon, YouTube, and Netflix use collaborative filtering as a part of their sophisticated recommendation systems. You can use this technique to build recommenders that give suggestions to a user on the basis of the likes and dislikes of similar users.
+Collaborative filtering is a technique that can identify items that a user might like on the basis of reactions by similar users. Most websites like Amazon, YouTube, and Netflix use collaborative filtering as a part of their sophisticated recommendation systems.
 
-The objective of this document is to compare Collaborative Filtering model pipeline performance between Snowflake and Databricks.
+The objective of this document is to compare Collaborative Filtering model pipeline performance built on Snowflake versus alternatives like Databricks.
 
 ## Summary
 Traditionally, Spark has been heralded as a fast parallel processing engine for Python applications. However, the advent of Snowflake in the Python ecosystem has introduced a significant competitor. In our comparison, we focused on the Alternating Least Squares (ALS) method for Collaborative Filtering, contrasting MLlib in the PySpark framework against the pure Python package 'Implicit' in Snowflake. Our performance evaluation was conducted using a dataset that captures the shopping behaviors of 1.4 million users.
 
 ![Results](images/results.png)
 
-The comparison spanned various Warehouse (cluster) sizes in Snowflake to gauge each step of the recommendation engine pipeline. Surprisingly, the Snowflake implementation outperformed the Spark-based approach in Databricks, particularly in model inference. This stage was efficiently managed in Snowflake using User Defined Functions, enabling the generation of top-5 item recommendations for each of the 1.4 million customers through parallel computation. Overall, a SMALL Warehouse configuration in Snowflake achieved processing speeds 3x faster than its Databricks Spark counterpart, and a MEDIUM Snowpark Warehouse configuration was 7x faster. These findings underscore Snowflake's prowess in facilitating rapid parallel computation, even with straightforward Python-based processes without much code refactoring to suit distributed computation frameworks.
+The comparison spanned various Warehouse (cluster) sizes in Snowflake to gauge each step of the recommendation engine pipeline. The Snowflake implementation outperformed the Spark-based approach in Databricks, particularly in model inference. This stage was efficiently managed in Snowflake by leveraging User Defined Functions, enabling the generation of top-5 item recommendations for each of the 1.4 million customers through parallel computation. Overall, a Small Warehouse configuration in Snowflake achieved processing speeds ~3x faster than its Databricks Spark counterpart, and a Medium Snowpark Warehouse configuration was ~4x faster. These findings underscore Snowflake's prowess in facilitating rapid parallel computation, even for use cases that historically rely on Spark for distributed computing.
 
 ## Collaborative Filtering Explained
-User reactions on a website can be explicit (rating on a scale of 1 to 5, likes or dislikes) or implicit (viewing an item, adding it to a wish list, the time spent on an article).
+User reactions on a website can be explicit or implicit.
 
-Explicit data is data where we have some sort of rating. Like the 1 to 5 ratings from the MovieLens or Netflix dataset. Here we know how much a user likes or dislikes an item which is great, but this data is hard to come by. Your users might not spend the time to rate items or your app might not work well with a rating approach in the first place.
+Explicit data is data where we have some sort of rating like the 1 to 5 ratings from the MovieLens or Netflix dataset, or a user liking a product shown to them. Although this type of explicit user feedback is invaluable, it’s often hard to set up and come by this data for most real-world applications.Your users might not spend the time to rate items or your app might not work well with a rating approach in the first place. You also face a cold start problem where you introduce new SKUs or entire product categories without any explicit feedback available initially.
 
-In real-world scenarios most feedback is not explicit but implicit. Implicit feedback is tracked automatically, like monitoring clicks, view times, purchases, etc. Thus it is much easier to collect. Think of yourself, how often you give a rating after purchasing a product vs. how often you click or purchase a product. In this document, we will focus on item recommendation.
+In most real-world scenarios, companies instead must rely on implicit feedback that is tracked automatically, like monitoring clicks, view times, purchases, etc.Think of yourself and how often you give a rating after purchasing a product vs. how often you just move on after making a purchase. We focus on collaborative filtering models based on implicit data because it’s the best way for most companies to build a recommendation model.
 
 ***Implicit dataset contains user and item interactions only.***
 
