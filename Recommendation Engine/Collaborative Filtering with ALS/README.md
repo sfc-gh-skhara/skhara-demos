@@ -36,6 +36,11 @@ Databricks leverages the power of Apache Spark, a unified analytics engine for l
 #### Snowflake Snowpark + Python Implicit Library:
 Snowflake utilizes Snowpark, a robust developer framework that integrates DataFrame-style programming with the power of distributed and parallel computing in Python. Snowpark operates in a pure Python runtime environment, thereby harnessing the rich ecosystem of Python libraries while simultaneously enabling high-performance data processing. With Snowflake, we employ the Implicit library - a preferred Python library for collaborative filtering with implicit datasets. Typically recognized for its user-friendly interface and effectiveness with small datasets, the Implicit library, when combined with Snowpark's capabilities, transforms into a formidable solution for big data challenges.
 
+## Methodology
+
+Our methodology entailed three primary stages: Pre-processing, Model Training, and Model Inference. Each stage was tailored to leverage the unique capabilities of Snowflake and Databricks.
+
+![Method](images/method_compare.png)
 
 ## References
 1. A gentle introduction to Alternating Least Squares: https://sophwats.github.io/2018-04-05-gentle-als.html
