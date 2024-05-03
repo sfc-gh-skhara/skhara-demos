@@ -21,18 +21,18 @@ warnings.filterwarnings("ignore")
 
 # COMMAND ----------
 
-# password = getpass()
+password = getpass()
 
 # COMMAND ----------
 
 config = {
     'account': 'sfsenorthamerica-skhara',
     'user': 'admin',
-    'password': 'Snowflake@11',
+    'password': password,
     'role': 'ACCOUNTADMIN',
     'warehouse': 'SSK_RESEARCH',
-    'database': 'RECOMMENDER_SYSTEMS',
-    'schema': 'COLLABORATIVE_FILTERING_ALS'
+    'database': 'DEMO_DB',
+    'schema': 'PUBLIC'
 }
 
 # COMMAND ----------
@@ -42,17 +42,13 @@ config = {
 
 # COMMAND ----------
 
-from pyspark import SparkConf, SparkContext
-from pyspark.sql import SQLContext
 from pyspark.sql.types import *
 from pyspark import SparkConf, SparkContext
 from pyspark.sql.functions import regexp_replace, col
-from pyspark.sql.functions import monotonically_increasing_id, collect_list 
 from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
 
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
-from pyspark.sql.window import Window
 
 sfOptions = {
     "sfURL": "vkb96626.snowflakecomputing.com",
@@ -68,7 +64,6 @@ SNOWFLAKE_SOURCE_NAME = "net.snowflake.spark.snowflake"
 
 # COMMAND ----------
 
-from pyspark.sql import SparkSession
 spark = SparkSession.builder.appName('Basics').getOrCreate()
 
 # COMMAND ----------
@@ -79,19 +74,7 @@ spark = SparkSession.builder.appName('Basics').getOrCreate()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Write Example
-# MAGIC df.write.mode('overwrite').saveAsTable("colab_implicit_events_data")
-# MAGIC ### Read Example
-# MAGIC test1 = spark.read.format('delta').load('dbfs:/user/hive/warehouse/colab_implicit_events_data')
-# MAGIC
-# MAGIC ### SQL to get table details
-# MAGIC %sql
-# MAGIC DESCRIBE DETAIL tablex
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC Load processed data from Snowflake
+# MAGIC Load processed data from Snowflake and saving to DBX delta tables so that we can compare like to like.
 
 # COMMAND ----------
 
@@ -103,56 +86,6 @@ df_raw = (spark.read.format(SNOWFLAKE_SOURCE_NAME)
         ).load())
 
 df_raw.write.mode('overwrite').saveAsTable("FEATURE_STORE_100")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC # Testing
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-feature_df = spark.read.format('delta').load('dbfs:/user/hive/warehouse/feature_store_100')
-snowdf = feature_df.drop(*['CA_ZIP','CUSTOMER_SK', 'C_CURRENT_HDEMO_SK', 'C_CURRENT_ADDR_SK', 'C_CUSTOMER_ID', 'CA_ADDRESS_SK', 'CD_DEMO_SK'])
-
-cat_cols = ['CD_GENDER', 'CD_MARITAL_STATUS', 'CD_CREDIT_RATING', 'CD_EDUCATION_STATUS']
-num_cols = ['C_BIRTH_YEAR', 'CD_DEP_COUNT']
-
-my_imputer = Imputer(
-    inputCols=num_cols,
-    outputCols=num_cols,  # Optionally, specify new output column names
-    strategy="median"
-)
-df_prepared = my_imputer.fit(snowdf).transform(snowdf)
-
-# OHE of Categorical Cols
-# Step 1: Indexing categorical columns using StringIndexer
-indexers = [StringIndexer(inputCol=col, outputCol=col + "_indexed").setHandleInvalid("keep") for col in cat_cols]
-
-# Step 2: Encoding indexed columns using OneHotEncoder
-encoder = OneHotEncoder(
-    inputCols=[indexer.getOutputCol() for indexer in indexers],
-    outputCols=[col + "_ohe" for col in cat_cols]
-)
-
-# Step 3: Assembling all transformations into a Pipeline
-pipeline = Pipeline(stages=indexers + [encoder])
-
-# Step 4: Fitting the pipeline and transforming the DataFrame
-df_prepared = pipeline.fit(df_prepared).transform(df_prepared)
-
-
-
-# COMMAND ----------
-
-
 
 # COMMAND ----------
 
